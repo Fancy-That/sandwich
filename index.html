@@ -32,7 +32,7 @@
 				</div>
 			</div>
 			<div class="w3-half w3-panel w3-card-4" ng-hide="signatureIndex==-1">
-				<div>
+				<div class="w3-row">
 					Ingredients:
 					<p class="w3-small w3-card-4">
 						{{signatureData[signatureIndex].ingredients}}
@@ -44,6 +44,16 @@
 					<p>
 						{{signatureData[signatureIndex].price | currency:"£"}}
 					</p>
+				</div>
+				<div class="w3-center">
+					<div class="w3-button">
+						-
+					</div>
+					<input style="width:50px;">
+					</input>
+					<div class="w3-button">
+						+
+					</div>
 				</div>
 			</div>
 		</div>
