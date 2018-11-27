@@ -14,21 +14,17 @@
 	</head>
 	<body>
 		<div ng-app="tApp" ng-controller="tController">
-			<div class="w3-panel w3-card-4 w3-half w3-row">
-				<div class="w3-button w3-col" ng-click="signatureIndex=0">
-					Egg Salad Relish
-				</div>
-				<div class="w3-button w3-col" ng-click="signatureIndex=1">
-					Pegasus
-				</div>
-				<div class="w3-button w3-col" ng-click="signatureIndex=2">
-					The Gallant
-				</div>
-				<div class="w3-button w3-col" ng-click="signatureIndex=3">
-					Angus & Tessie's Skipanon Sing-A-Long
-				</div>
-				<div class="w3-button w3-col" ng-click="signatureIndex=4">
-					The yellow Elephant
+			<div class="w3-panel w3-half w3-row">
+				<div class="w3-button w3-col  w3-card" ng-repeat="x in signatureData" style="height:15%" ng-click="$parent.signatureIndex=$index">
+					<div class="w3-display-container">
+						<img src="./image.png" class="w3-image"/>
+						<div class="w3-display-topleft">
+							{{x.name}}
+						</div>
+						<div class="w3-display-topright">
+							{{x.price | currency:"£"}}
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="w3-half w3-panel w3-card-4" ng-hide="signatureIndex==-1">
@@ -41,18 +37,19 @@
 					<p>
 						{{signatureData[signatureIndex].description}}
 					</p>
-					<p>
-						{{signatureData[signatureIndex].price | currency:"£"}}
-					</p>
 				</div>
 				<div class="w3-center">
-					<div class="w3-button">
+					<div class="w3-button" ng-click="numSandwiches=numSandwiches-1">
 						-
 					</div>
-					<input style="width:50px;">
+					<input style="width:50px;" ng-value="numSandwiches" class="w3-center">
 					</input>
-					<div class="w3-button">
+					<div class="w3-button" ng-click="numSandwiches=numSandwiches+1">
 						+
+					</div>
+					{{signatureData[signatureIndex].price * numSandwiches | currency:"£"}}
+					<div class="w3-button w3-col">
+						Add to basket
 					</div>
 				</div>
 			</div>
@@ -62,12 +59,13 @@
 			var app = angular.module("tApp", []);
 
 			app.controller("tController", function($scope){
+				$scope.numSandwiches = 0;
 				$scope.signatureData = [
-										{ingredients:"white bread: egg mayonnaise, sliced radishes, chopped oil-cured olives, fresh coriander", description:"very tasty", price:0},
-										{ingredients:"baguette: roast beef, sour cream, raw mushrooms", description:"very tasty", price:0},
-										{ingredients:"wholewheat bread: turkey, bacon, avocado, cranberry mayonnaise", description:"very tasty", price:0},
-										{ingredients:"white bread: tuna, mustard, fresh herb relish", description:"very tasty", price:0},
-										{ingredients:"pita: peanut butter, honey, banana, toasted sesame seeds", description:"very tasty", price:0}
+										{name:"Egg Salad Relish", ingredients:"white bread: egg mayonnaise, sliced radishes, chopped oil-cured olives, fresh coriander", description:"very tasty", price:1},
+										{name:"Pegasus", ingredients:"baguette: roast beef, sour cream, raw mushrooms", description:"very tasty", price:2},
+										{name:"The Gallant", ingredients:"wholewheat bread: turkey, bacon, avocado, cranberry mayonnaise", description:"very tasty", price:3},
+										{name:"Angus & Tessie's Skipanon Sing-A-Long", ingredients:"white bread: tuna, mustard, fresh herb relish", description:"very tasty", price:4},
+										{name:"The yellow Elephant", ingredients:"pita: peanut butter, honey, banana, toasted sesame seeds", description:"very tasty", price:5}
 				];
 				$scope.signatureIndex = -1;
 			});
