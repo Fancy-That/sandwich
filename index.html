@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+			<title>
+				The Special Sandwich Shop
+			</title>
+			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+			<link rel="stylesheet"href="https://www.w3schools.com/w3css/4/w3.css"/>
+			<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+			<link href="https://fonts.googleapis.com/css?family=Roboto"rel="stylesheet"/>
+			<!--<link rel="stylesheet"href="./static/css/style.css"/>-->
+
+	</head>
+	<body>
+		<div ng-app="tApp" ng-controller="tController">
+			<div class="w3-panel w3-card-4 w3-half w3-row">
+				<div class="w3-button w3-col" ng-click="signatureIndex=0">
+					Egg Salad Relish
+				</div>
+				<div class="w3-button w3-col" ng-click="signatureIndex=1">
+					Pegasus
+				</div>
+				<div class="w3-button w3-col" ng-click="signatureIndex=2">
+					The Gallant
+				</div>
+				<div class="w3-button w3-col" ng-click="signatureIndex=3">
+					Angus & Tessie's Skipanon Sing-A-Long
+				</div>
+				<div class="w3-button w3-col" ng-click="signatureIndex=4">
+					The yellow Elephant
+				</div>
+			</div>
+			<div class="w3-half w3-panel w3-card-4" ng-hide="signatureIndex==-1">
+				<div>
+					Ingredients:
+					<p class="w3-small w3-card-4">
+						{{signatureData[signatureIndex].ingredients}}
+					</p>
+					Description:
+					<p>
+						{{signatureData[signatureIndex].description}}
+					</p>
+					<p>
+						{{signatureData[signatureIndex].price | currency:"£"}}
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			var app = angular.module("tApp", []);
+
+			app.controller("tController", function($scope){
+				$scope.signatureData = [
+										{ingredients:"white bread: egg mayonnaise, sliced radishes, chopped oil-cured olives, fresh coriander", description:"very tasty", price:0},
+										{ingredients:"baguette: roast beef, sour cream, raw mushrooms", description:"very tasty", price:0},
+										{ingredients:"wholewheat bread: turkey, bacon, avocado, cranberry mayonnaise", description:"very tasty", price:0},
+										{ingredients:"white bread: tuna, mustard, fresh herb relish", description:"very tasty", price:0},
+										{ingredients:"pita: peanut butter, honey, banana, toasted sesame seeds", description:"very tasty", price:0}
+				];
+				$scope.signatureIndex = -1;
+			});
+
+		</script>
+	</body>
+</html>
