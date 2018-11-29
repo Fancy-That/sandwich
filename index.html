@@ -14,60 +14,221 @@
 	</head>
 	<body>
 		<div ng-app="tApp" ng-controller="tController">
-			<div class="w3-panel w3-half w3-row">
-				<div class="w3-button w3-col  w3-card" ng-repeat="x in signatureData" style="height:15%" ng-click="$parent.signatureIndex=$index">
-					<div class="w3-display-container">
-						<img src="./image.png" style="height:15vh" class="w3-image"/>
-						<div class="w3-display-topleft">
-							{{x.name}}
-						</div>
-						<div class="w3-display-topright">
-							{{x.price | currency:"£"}}
+			<div ng-show="page.main">
+				<div class="w3-xxlarge w3-center">
+		            The Special Sandwich Shop
+		        </div>
+		        <button style="height:30vh;width:60vw;margin-left:15vw" class="w3-col">
+		            Chose from our signature sandwiches
+		        </button>
+		        <p class="w3-col w3-center">
+		            or
+		        </p>
+		        <button style="height:30vh;width:60vw;margin-left:15vw" class="w3-col">
+		            Make your own custom sandwiches
+		        </button>
+			</div>
+			<div ng-show="page.signature">
+				<div class="w3-panel w3-half w3-row">
+					<div class="w3-button w3-col  w3-card" ng-repeat="x in signatureData" style="height:15%" ng-click="$parent.signatureIndex=$index">
+						<div class="w3-display-container">
+							<img src="{{x.image}}" style="height:15vh" class="w3-image"/>
+							<div class="w3-display-topleft">
+								{{x.name}}
+							</div>
+							<div class="w3-display-topright">
+								{{x.price | currency:"£"}}
+							</div>
+							<div class="w3-display-bottomright">
+								<img ng-show="x.vegetarian" src="http://images.sasongsmat.nu/vegetarianmark/vegetarian-mark.svg" style="width: 3vh;height: 3vh;margin-bottom:3vh;"/>
+							</div>
 						</div>
 					</div>
+				</div>
+				<div class="w3-half w3-panel w3-card-4" ng-hide="signatureIndex==-1">
+					<div class="w3-row">
+						Ingredients:
+						<p class="w3-small w3-card-4">
+							{{signatureData[signatureIndex].ingredients}}
+							<img ng-show="signatureData[signatureIndex].vegetarian" src="http://images.sasongsmat.nu/vegetarianmark/vegetarian-mark.svg" style="width: 3vh;height: 3vh;"/>
+						</p>
+						Description:
+						<p ng-bind-html="signatureData[signatureIndex].description">
+						</p>
+					</div>
+					<div class="w3-center">
+						<div class="w3-button fa fa-minus" ng-click="removeSandwich()">
+						</div>
+						<input style="width:50px;" ng-model="numSandwiches" class="w3-center">
+						</input>
+						<div class="w3-button fa fa-plus" ng-click="addSandwich()">
+						</div>
+						{{signatureData[signatureIndex].price * numSandwiches | currency:"£"}}
+						<div class="w3-button w3-col" ng-click="addToBasket(signatureIndex, numSandwiches)">
+							Add to basket
+						</div>
+					</div>
+				</div>
+				<div class="w3-half w3-panel w3-card-4" ng-show="signatureIndex==-1">
+					<div class="w3-row">
+						Select a sandwich to see its yummy insides.
+					</div>
+				</div>
+				<span class="fa fa-shopping-basket w3-xxlarge w3-circle w3-button">
+				</span>
+				<div>
+					<ul class="w3-ul">
+						<li ng-repeat="x in sandwiches">
+							{{signatureData[x.index].name}} {{x.quantity}}
+							<span class="w3-button" ng-click="$parent.sandwiches.splice(index, 1);">
+								&times;
+							</span>
+						</li>
+					</ul>
+				</div>
+				<div id="modal" class="w3-modal">
+					<div class="w3-modal-content w3-round">
+						<span class="w3-button w3-round" ng-click="closeModal()">
+							&times;
+						</span>
+						<div class="w3-container">
+
+							<div class="row">
+  <div class="col-75">
+    <div class="container">
+      <form>
+
+        <div class="row">
+          <div class="col-50">
+            <h3>Billing Address</h3>
+            <label for="fname"><i class="fa fa-user"></i> Full Name</label>
+						<br />
+			<input type="text" id="fname" name="firstname" placeholder="John M. Doe">
+			<br />
+			<label for="email"><i class="fa fa-envelope"></i> Email</label>
+			<br />
+            <input type="text" id="email" name="email" placeholder="john@example.com">
+						<br />
+            <label for="adr"><i class="fa fa-address-card-o"></i> Address</label>
+						<br />
+            <input type="text" id="adr" name="address" placeholder="542 W. 15th Street">
+						<br />
+            <label for="city"><i class="fa fa-institution"></i> City</label>
+						<br />
+            <input type="text" id="city" name="city" placeholder="New York">
+						<br />
+
+            <div class="row">
+
+              <div class="col-50">
+
+              </div>
+            </div>
+          </div>
+
+
+          </div>
+
+        </div>
+
+    </div>
+  </div>
+
+  <div class="col-25">
+    <div class="container">
+      <h4>Cart
+        <span class="price" style="color:black">
+          <i class="fa fa-shopping-cart"></i>
+          <b></b>
+        </span>
+      </h4>
+
+      <hr>
+      <p>Total <span class="price" style="color:black"><b></b></span></p>
+    </div>
+		<div class="">
+			<button type="button" name="button">
+				Submit Order
+			</button>
+
+		</div>
+  </div>
+</div>
+
+
+						</div>
+					</div>
+				</div>
 				</div>
 			</div>
-			<div class="w3-half w3-panel w3-card-4" ng-hide="signatureIndex==-1">
-				<div class="w3-row">
-					Ingredients:
-					<p class="w3-small w3-card-4">
-						{{signatureData[signatureIndex].ingredients}}
-					</p>
-					Description:
-					<p>
-						{{signatureData[signatureIndex].description}}
-					</p>
-				</div>
-				<div class="w3-center">
-					<div class="w3-button" ng-click="numSandwiches=numSandwiches-1">
-						-
-					</div>
-					<input style="width:50px;" ng-value="numSandwiches" class="w3-center">
-					</input>
-					<div class="w3-button" ng-click="numSandwiches=numSandwiches+1">
-						+
-					</div>
-					{{signatureData[signatureIndex].price * numSandwiches | currency:"£"}}
-					<div class="w3-button w3-col">
-						Add to basket
-					</div>
-				</div>
+			<div ng-show="page.custom">
 			</div>
 		</div>
-
 		<script>
 			var app = angular.module("tApp", []);
-
-			app.controller("tController", function($scope){
+			app.controller("tController", function($scope, $sce){
 				$scope.numSandwiches = 0;
+				$scope.sandwiches = [];
+				$scope.page = {main:false,signature:true,custom:false};
 				$scope.signatureData = [
-										{name:"Egg Salad Relish", ingredients:"white bread: egg mayonnaise, sliced radishes, chopped oil-cured olives, fresh coriander", description:"very tasty", price:1},
-										{name:"Pegasus", ingredients:"baguette: roast beef, sour cream, raw mushrooms", description:"very tasty", price:2},
-										{name:"The Gallant", ingredients:"wholewheat bread: turkey, bacon, avocado, cranberry mayonnaise", description:"very tasty", price:3},
-										{name:"Angus & Tessie's Skipanon Sing-A-Long", ingredients:"white bread: tuna, mustard, fresh herb relish", description:"very tasty", price:4},
-										{name:"The yellow Elephant", ingredients:"pita: peanut butter, honey, banana, toasted sesame seeds", description:"very tasty", price:5}
+										{name:"Egg Salad Relish",
+										ingredients:"White Bread: Egg Mayonnaise, Sliced Radishes, Chopped Oil-Cured Olives, Fresh Coriander",
+										description:$sce.trustAsHtml("Enjoy our Egg Salad Relish which comes with <b>egg mayonnaise</b>, <b>sliced radishes</b>, <b>chopped oil-cured olives</b> and <b>fresh coriander</b> inside our freshly baked <b>white bread</b>."),
+										price:1,
+										vegetarian:true,
+										image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+										{name:"The Pegasus",
+										ingredients:"Baguette: Roast Beef, Sour Cream, Raw Mushrooms",
+										description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+										price:2,
+										vegetarian:false,
+										image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+										{name:"The Gallant",
+										ingredients:"Wholewheat Bread: Turkey, Bacon, Avocado, Cranberry Mayonnaise",
+										description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+										price:3,
+										vegetarian:false,
+										image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+										{name:"Angus & Tessie's Skipanon Sing-A-Long",
+										ingredients:"White Bread: Tuna, Mustard, Fresh Herb Relish",
+										description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+										price:4,
+										vegetarian:false,
+										image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+										{name:"The Yellow Elephant",
+										ingredients:"Pita: Peanut Butter, Honey, Banana, Toasted Sesame Seeds",
+										description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+										price:5,
+										vegetarian:true,
+										image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+										{ingredients:$sce.trustAsHtml("<b>test</b>")}
 				];
 				$scope.signatureIndex = -1;
+
+				$scope.openModal = function() {
+					document.getElementById('modal').style.display='block';
+				};
+
+				$scope.closeModal = function() {
+					document.getElementById('modal').style.display='none';
+				}
+
+				$scope.addSandwich = function() {
+					$scope.numSandwiches>98?0:$scope.numSandwiches++;
+				};
+
+				$scope.removeSandwich = function() {
+					$scope.numSandwiches?$scope.numSandwiches--:0;
+				};
+
+				$scope.addToBasket = function(i, amount) {
+					if (!amount)
+						return;
+					for (var j = $scope.sandwiches.length; j;)
+						if ($scope.sandwiches[--j].index == i)
+							return $scope.sandwiches[j].quantity+=amount;
+					$scope.sandwiches.push({index:i,quantity:amount});
+				};
 			});
 
 		</script>
