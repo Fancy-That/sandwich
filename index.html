@@ -18,19 +18,19 @@
 				<div class="w3-xxlarge w3-center">
 		            The Special Sandwich Shop
 		        </div>
-		        <button style="height:30vh;width:60vw;margin-left:15vw" class="w3-col" ng-click="changePage('signature')">
+		        <button style="height:30vh;width:60vw;margin-left:20vw" class="w3-col" ng-click="changePage('signature')">
 		            Chose from our signature sandwiches
 		        </button>
 		        <p class="w3-col w3-center">
 		            or
 		        </p>
-		        <button style="height:30vh;width:60vw;margin-left:15vw" class="w3-col" ng-click="changePage('custom')">
+		        <button style="height:30vh;width:60vw;margin-left:20vw" class="w3-col" ng-click="changePage('custom')">
 		            Make your own custom sandwiches
 		        </button>
 			</div>
 			<div ng-show="page.signature">
 				<div class="w3-panel w3-half w3-row">
-					<div class="w3-button w3-col  w3-card" ng-repeat="x in signature.data" style="height:15%" ng-click="$parent.signature.index=$index">
+					<div class="w3-button w3-col  w3-card" ng-repeat="x in signature.data" style="height:15%" ng-click="$parent.signature.changeIndex($index)">
 						<div class="w3-display-container">
 							<img src="{{x.image}}" style="height:15vh" class="w3-image"/>
 							<div class="w3-display-topleft">
@@ -77,95 +77,27 @@
 
 				<!-- BASKET -->
 
-				<span class="fa fa-shopping-basket w3-xxlarge w3-circle w3-button">
+				<span class="fa fa-shopping-basket w3-xxlarge w3-circle w3-button" ng-click="openModal('basket')">
 				</span>
 				<div>
 					<ul class="w3-ul">
 						<li ng-repeat="x in sandwiches">
 							{{x.print()}}
-							<div class="w3-button fa fa-minus" ng-click="x.remove()">
+							<div class="w3-right">
+								<div class="w3-button fa fa-minus" ng-click="x.remove()">
+								</div>
+								<input style="width:50px;" ng-model="x.data[x.data.length-1]" class="w3-center">
+								</input>
+								<div class="w3-button fa fa-plus" ng-click="x.add()">
+								</div>
+								<span class="w3-button" ng-click="$parent.sandwiches.splice($index, 1);">
+									&times;
+								</span>
 							</div>
-							<input style="width:50px;" ng-model="x.data[x.data.length-1]" class="w3-center">
-							</input>
-							<div class="w3-button fa fa-plus" ng-click="x.add()">
-							</div>
-							<span class="w3-button" ng-click="$parent.sandwiches.splice(index, 1);">
-								&times;
-							</span>
 						</li>
 					</ul>
 				</div>
-				<div id="modal" class="w3-modal">
-					<div class="w3-modal-content w3-round">
-						<span class="w3-button w3-round" ng-click="closeModal()">
-							&times;
-						</span>
-						<div class="w3-container">
-
-							<div class="row">
-  <div class="col-75">
-    <div class="container">
-      <form>
-
-        <div class="row">
-          <div class="col-50">
-            <h3>Billing Address</h3>
-            <label for="fname"><i class="fa fa-user"></i> Full Name</label>
-						<br />
-			<input type="text" id="fname" name="firstname" placeholder="John M. Doe">
-			<br />
-			<label for="email"><i class="fa fa-envelope"></i> Email</label>
-			<br />
-            <input type="text" id="email" name="email" placeholder="john@example.com">
-						<br />
-            <label for="adr"><i class="fa fa-address-card-o"></i> Address</label>
-						<br />
-            <input type="text" id="adr" name="address" placeholder="542 W. 15th Street">
-						<br />
-            <label for="city"><i class="fa fa-institution"></i> City</label>
-						<br />
-            <input type="text" id="city" name="city" placeholder="New York">
-						<br />
-
-            <div class="row">
-
-              <div class="col-50">
-
-              </div>
-            </div>
-          </div>
-
-
-          </div>
-
-        </div>
-
-    </div>
-  </div>
-
-  <div class="col-25">
-    <div class="container">
-      <h4>Cart
-        <span class="price" style="color:black">
-          <i class="fa fa-shopping-cart"></i>
-          <b></b>
-        </span>
-      </h4>
-
-      <hr>
-      <p>Total <span class="price" style="color:black"><b></b></span></p>
-    </div>
-		<div class="">
-			<button type="button" name="button">
-				Submit Order
-			</button>
-
-		</div>
-  </div>
-</div>
-						</div>
-					</div>
-				</div>
+			</div>
 			<div ng-show="page.custom" class="w3-center">
 				<div class="w3-xxlarge">
 					Custom Sandwiches
@@ -209,8 +141,41 @@
 						</div>
 					</div>
 				</div>
-
-
+				<div class="w3-button" ng-click="addToBasket(custom.toSandwich())">
+					om nom
+				</div>
+				<span class="fa fa-shopping-basket w3-xxlarge w3-circle w3-button" ng-click="openModal('basket')">
+				</span>
+			</div>
+			<div id="basket" class="w3-modal">
+				<div class="w3-modal-content w3-round w3-animate-zoom">
+					<span class="w3-button w3-round w3-right" ng-click="closeModal('basket')">
+						&times;
+					</span>
+					<div class="w3-jumbo">
+						Basket
+					</div>
+					<div class="w3-container">
+						<div>
+							<ul class="w3-ul">
+								<li ng-repeat="x in sandwiches">
+									{{x.print()}} ({{x.price() | currency:"£"}})
+									<div class="w3-right">
+										<div class="w3-button fa fa-minus" ng-click="x.remove()">
+										</div>
+										<input style="width:50px;" ng-model="x.data[x.data.length-1]" class="w3-center">
+										</input>
+										<div class="w3-button fa fa-plus" ng-click="x.add()">
+										</div>
+										<span class="w3-button" ng-click="$parent.sandwiches.splice(index, 1);">
+											&times;
+										</span>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<script>
@@ -220,9 +185,20 @@
 				function Sandwich(data, signature = false) {
 					this.data=data;
 					this.signature=signature;
+					this.basePrice=1;
+					this.price=()=>{
+						if (this.signature)
+							return $scope.signature.data[this.data[0]].price;
+						var price = this.basePrice;
+						for (var i = 5; i;)
+							price+= this.data[3][--i]*0.25;
+						for (var i = 6; i;)
+							price+= this.data[4][--i]*0.5;
+						return price;
+					};
 					this.add=()=>this.data[this.data.length-1]<98?this.data[this.data.length-1]++:0;
 					this.remove=()=>this.data[this.data.length-1]?this.data[this.data.length-1]--:0;
-					this.print=()=>this.signature?$scope.signature.data[this.data[0]].name:"custom";
+					this.print=()=>this.signature?$scope.signature.data[this.data[0]].name:"custom "+JSON.stringify(this.data);
 				};
 
 				$scope.signature = {
@@ -233,6 +209,10 @@
 					},
 					removeSandwich:function() {
 						this.num?this.num--:0;
+					},
+					changeIndex:function(i){
+						this.index = i;
+						this.num = 0;
 					},
 					data:[
 						{name:"Egg Salad Relish",
@@ -264,11 +244,12 @@
 						description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
 						price:5,
 						vegetarian:true,
-						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
-						{ingredients:$sce.trustAsHtml("<b>test</b>")}
+						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"}
 					],
 					toSandwich:function() {
-						return new Sandwich([this.index, this.num], true);
+						var x = new Sandwich([this.index, this.num], true);
+						this.num = 0;
+						return x;
 					}
 				};
 
@@ -315,14 +296,16 @@
 						this.sandwich[this.index][i]?this.sandwich[this.index][i]--:0;
 					},
 					toSandwich:function() {
-						return new Sandwich(this.sandwich);
+						var x = this.sandwich.slice();
+						this.sandwich = this.default;
+						return new Sandwich(x);
 					}
 				};
 
 				$scope.page = {main:true,signature:false,custom:false};
 
-				$scope.openModal=($)=>{document.getElementById($).style.display='block';};
-				$scope.closeModal=($)=>{document.getElementById($).style.display='none';};
+				$scope.openModal=($)=>document.getElementById($).style.display='block';
+				$scope.closeModal=($)=>document.getElementById($).style.display='none';
 
 				$scope.addToBasket = function(sandwich) {
 					if (!sandwich.data[sandwich.data.length-1])
@@ -330,8 +313,8 @@
 					for (var j = $scope.sandwiches.length; j;) {
 						var same = true;
 						if ($scope.sandwiches[--j].data.length == sandwich.data.length)
-							for (var i = sandwich.data.length - 1; i--;)
-								if (!($scope.sandwiches[j].data[i] == sandwich.data[i]))
+							for (var i = sandwich.data.length - 1; i;)
+								if ($scope.sandwiches[j].data[--i] != sandwich.data[i])
 									same = false;
 							if(same)
 								return $scope.sandwiches[j].data[sandwich.data.length-1]+=sandwich.data[sandwich.data.length-1];
@@ -347,17 +330,25 @@
 
 
 
-			/*
+
 				$interval(function()
 				{
-					console.log(new Sandwich([1,2,3,4]));
+					console.log($scope.sandwiches);
 				},1000);
-			*/
+
 
 				$scope.isArray = function(x) {
 					return Array.isArray(x);
 				};
 			});
+
+
+			var basket = document.getElementById('basket');
+			window.onclick = function(event) {
+  			if (event.target == basket) {
+    			basket.style.display = "none";
+  			}
+}
 		</script>
 	</body>
 </html>
