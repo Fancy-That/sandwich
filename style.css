@@ -1,0 +1,4 @@
+.customImageText {display: none;}
+.customAddIn {display: none;}
+.customImage:hover .customImageText {display: inline;}
+.customImage:hover .customAddIn {display: inline;}
