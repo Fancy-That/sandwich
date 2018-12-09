@@ -14,6 +14,14 @@
 	</head>
 	<body>
 		<div ng-app="tApp" ng-controller="tController">
+			<div class="w3-display-container fa fa-shopping-basket w3-xxlarge w3-right w3-button" ng-click="openModal('basket')">
+				<div class = "w3-display-bottomright w3-text-black w3-red w3-circle w3-padding-2" style="font-size: 3vh; margin-right: 2vh; {{sandwiches.length<10?'padding-left: 1vh; padding-right: 1vh;':''}}" ng-show="sandwiches.length">
+					{{numBasketItems()}}
+				</div>
+
+			</div>
+			<span class="fa fa-home w3-xxlarge w3-circle w3-right w3-button" ng-click="changePage('main')">
+			</span>
 			<div ng-show="page.main">
 				<div class="w3-xxlarge w3-center">
 		            The Special Sandwich Shop
@@ -30,21 +38,24 @@
 			</div>
 			<div ng-show="page.signature">
 				<div class="w3-panel w3-half w3-row">
-					<div class="w3-button w3-col  w3-card" ng-repeat="x in signature.data" style="height:15%" ng-click="$parent.signature.changeIndex($index)">
-						<div class="w3-display-container">
-							<img src="{{x.image}}" style="height:15vh" class="w3-image"/>
-							<div class="w3-display-topleft">
-								{{x.name}}
-							</div>
-							<div class="w3-display-topright">
-								{{x.price | currency:"£"}}
-							</div>
-							<div class="w3-display-bottomright">
-								<img ng-show="x.vegetarian" src="http://images.sasongsmat.nu/vegetarianmark/vegetarian-mark.svg" style="width: 3vh;height: 3vh;margin-bottom:3vh;"/>
+					<div  ng-repeat="x in signature.data">
+						<div class="w3-button w3-col  w3-card {{signature.index==$index?'w3-grey':''}}" style="height:15%" ng-click="$parent.signature.changeIndex($index)">
+							<div class="w3-display-container">
+								<img src="{{x.image}}" style="height:15vh" class="w3-image"/>
+								<div class="w3-display-topleft">
+									{{x.name}}
+								</div>
+								<div class="w3-display-topright">
+									{{x.price | currency:"£"}}
+								</div>
+								<div class="w3-display-bottomright">
+									<img ng-show="x.vegetarian" src="http://images.sasongsmat.nu/vegetarianmark/vegetarian-mark.svg" style="width: 3vh;height: 3vh;margin-bottom:3vh;"/>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+
 				<div class="w3-half w3-panel w3-card-4" ng-hide="signature.index==-1">
 					<div class="w3-row">
 						Ingredients:
@@ -64,8 +75,13 @@
 						<div class="w3-button fa fa-plus" ng-click="signature.addSandwich()">
 						</div>
 						{{signature.data[signature.index].price * numSandwiches | currency:"£"}}
-						<div class="w3-button w3-col" ng-click="addToBasket(signature.toSandwich())">
-							Add to basket
+						<div class="w3-col">
+							<div class="w3-button" ng-click="addToBasket(signature.toSandwich())">
+								Add to basket
+							</div>
+							<input class="w3-check" type="checkbox" ng-model="signature.salad">
+								Salad
+							</input>
 						</div>
 					</div>
 				</div>
@@ -74,29 +90,6 @@
 						Select a sandwich to see its yummy insides.
 					</div>
 				</div>
-
-				<!-- BASKET -->
-
-				<span class="fa fa-shopping-basket w3-xxlarge w3-circle w3-button" ng-click="openModal('basket')">
-				</span>
-				<div>
-					<ul class="w3-ul">
-						<li ng-repeat="x in sandwiches">
-							{{x.print()}}
-							<div class="w3-right">
-								<div class="w3-button fa fa-minus" ng-click="x.remove()">
-								</div>
-								<input style="width:50px;" ng-model="x.data[x.data.length-1]" class="w3-center">
-								</input>
-								<div class="w3-button fa fa-plus" ng-click="x.add()">
-								</div>
-								<span class="w3-button" ng-click="$parent.sandwiches.splice($index, 1);">
-									&times;
-								</span>
-							</div>
-						</li>
-					</ul>
-				</div>
 			</div>
 			<div ng-show="page.custom" class="w3-center">
 				<div class="w3-xxlarge">
@@ -104,19 +97,19 @@
 				</div>
 				<div>
 					<div class="w3-bar">
-						<div class="w3-bar-item w3-button" ng-click="custom.index=0">
+						<div class="w3-bar-item w3-button {{custom.index==0?'w3-black w3-text-white':''}}" ng-click="custom.index=0">
 							Bread
 						</div>
-						<div class="w3-bar-item w3-button" ng-click="custom.index=1">
+						<div class="w3-bar-item w3-button {{custom.index==1?'w3-black w3-text-white':''}}" ng-click="custom.index=1">
 							Spread
 						</div>
-						<div class="w3-bar-item w3-button" ng-click="custom.index=2">
+						<div class="w3-bar-item w3-button {{custom.index==2?'w3-black w3-text-white':''}}" ng-click="custom.index=2">
 							Main
 						</div>
-						<div class="w3-bar-item w3-button" ng-click="custom.index=3">
+						<div class="w3-bar-item w3-button {{custom.index==3?'w3-black w3-text-white':''}}" ng-click="custom.index=3">
 							Add-ins
 						</div>
-						<div class="w3-bar-item w3-button" ng-click="custom.index=4">
+						<div class="w3-bar-item w3-button {{custom.index==4?'w3-black w3-text-white':''}}" ng-click="custom.index=4">
 							Premium Add-ins
 						</div>
 					</div>
@@ -124,7 +117,7 @@
 						<div ng-repeat="x in custom.data[custom.index]">
 							<div class="w3-display-container customImage" style="width:15vh;" ng-click="custom.select($index)">
 								<img class="w3-hover-grayscale w3-image {{custom.sandwich[custom.index]==$index?'w3-grayscale':''}}" src="{{x.image}}" style="width: 15vh; height: 15vh;" />
-								<div class="w3-display-bottommiddle w3-container customImageText">
+								<div class="w3-display-bottommiddle w3-container customImageText" style="display:block;">
 									{{x.name}}
 								</div>
 								<div class="w3-display-middle w3-jumbo w3-green w3-circle fa fa-check" style="{{custom.sandwich[custom.index]==$index?'':'display:none;'}}">
@@ -132,7 +125,7 @@
 								<div class="w3-display-middle customAddIn" style="{{isArray(custom.sandwich[custom.index])?'':'display: none;'}}">
 									<div class="w3-button fa fa-plus" ng-click="custom.addAddin($index)">
 									</div>
-									<input ng-model="custom.sandwich[custom.index][$index]" style="width:5vw; margin:0;" ng-model="numSandwiches" class="w3-center">
+									<input ng-model="custom.sandwich[custom.index][$index]" style="width:5vw; margin:0;" class="w3-center w3-white" disabled>
 									</input>
 									<div class="w3-button fa fa-minus" ng-click="custom.removeAddin($index)">
 									</div>
@@ -142,36 +135,81 @@
 					</div>
 				</div>
 				<div class="w3-button" ng-click="addToBasket(custom.toSandwich())">
-					om nom
+					Add To Basket
 				</div>
-				<span class="fa fa-shopping-basket w3-xxlarge w3-circle w3-button" ng-click="openModal('basket')">
-				</span>
 			</div>
 			<div id="basket" class="w3-modal">
 				<div class="w3-modal-content w3-round w3-animate-zoom">
 					<span class="w3-button w3-round w3-right" ng-click="closeModal('basket')">
 						&times;
 					</span>
-					<div class="w3-jumbo">
-						Basket
+					<div class="w3-row">
+						<div class="w3-jumbo w3-half">
+							Basket
+						</div>
+						<div class="w3-half">
+							<label>
+								Loyalty Card:
+							</label>
+							<input tabindex="1" type="number" ng-model="card[0]" style="width:30px;" min="0" max="9">
+							</input>
+							<input tabindex="1" type="number" ng-model="card[1]" style="width:30px;" min="0" max="9">
+							</input>
+							<input tabindex="1" type="number" ng-model="card[2]" style="width:30px;" min="0" max="9">
+							</input>
+							<input tabindex="1" type="number" ng-model="card[3]" style="width:30px;" min="0" max="9">
+							</input>
+							<div>
+								<span ng-repeat="x in starNum()">
+									<span class="fa fa-star w3-text-{{loyalty[cardString()]>$index?'yellow':loyalty[cardString()]==$index&&sandwiches.length?'green':'grey'}}">
+									</span>
+								</span>
+							</div>
+						</div>
 					</div>
 					<div class="w3-container">
 						<div>
 							<ul class="w3-ul">
 								<li ng-repeat="x in sandwiches">
-									{{x.print()}} ({{x.price() | currency:"£"}})
+									{{x.print()}} {{x.signature?x.data[1]?"(Salad)":"(Sandwich)":""}}
+									<span class="w3-text-grey w3-small">
+										{{x.price() | currency:"£"}}
+									</span>
 									<div class="w3-right">
 										<div class="w3-button fa fa-minus" ng-click="x.remove()">
 										</div>
-										<input style="width:50px;" ng-model="x.data[x.data.length-1]" class="w3-center">
+										<input style="width:50px;" ng-model="x.data[x.data.length-1]" disabled class="w3-white w3-center">
 										</input>
 										<div class="w3-button fa fa-plus" ng-click="x.add()">
 										</div>
-										<span class="w3-button" ng-click="$parent.sandwiches.splice(index, 1);">
+										<span>
+											{{x.data[x.data.length-1] * x.price() | currency:"£"}}
+										</span>
+										<span class="w3-button" ng-click="$parent.sandwiches.splice($index, 1);">
 											&times;
 										</span>
 									</div>
+									<div class="w3-card-2 w3-tiny" style="font-style:italic;">
+										{{x.ingredients()}}
+									</div>
 								</li>
+								<div ng-hide="sandwiches.length" style="font-style:italic;">
+									The basket is currently empty!
+								</div>
+								<div ng-show="sandwiches.length" class="w3-container">
+									<div class="w3-button w3-left w3-green">
+										Submit
+									</div>
+									<div class="w3-right">
+
+									</div>
+									<div class="w3-right w3-xlarge">
+										<div class="w3-small">
+											{{loyalty[cardString()]==9?"Loyalty: " + (minItemPrice() + totalCost() | currency:"£") + " - " + (minItemPrice() | currency:"£"):""}}
+										</div>
+										Total Cost: {{totalCost() | currency:"£"}}
+									</div>
+								</div>
 							</ul>
 						</div>
 					</div>
@@ -182,6 +220,28 @@
 			var app = angular.module("tApp", []);
 			app.controller("tController", function($scope, $sce, $interval){
 				$scope.sandwiches = [];
+				$scope.card = [0,0,0,0];
+				$scope.cardString=()=>""+$scope.card[0]+$scope.card[1]+$scope.card[2]+$scope.card[3];
+				$scope.starNum = function() {
+					return new Array(1,2,3,4,5,6,7,8,9,10);
+				};
+				$scope.loyalty={
+					"4321":2,
+					"1234":7,
+					"9999":9
+				};
+				$scope.totalCost = function() {
+					var out = 0;
+					for (var i = $scope.sandwiches.length; i;) {
+						if ($scope.sandwiches[--i].signature)
+							out += $scope.signature.data[$scope.sandwiches[i].data[0]].price * $scope.sandwiches[i].data[2];
+						else
+							out += $scope.sandwiches[i].price() * $scope.sandwiches[i].data[6];
+					}
+					if ($scope.loyalty[$scope.cardString()])
+						out -= $scope.minItemPrice();
+					return out;
+				};
 				function Sandwich(data, signature = false) {
 					this.data=data;
 					this.signature=signature;
@@ -192,27 +252,57 @@
 						var price = this.basePrice;
 						for (var i = 5; i;)
 							price+= this.data[3][--i]*0.25;
-						for (var i = 6; i;)
+						for (var i = 7; i;)
 							price+= this.data[4][--i]*0.5;
 						return price;
 					};
-					this.add=()=>this.data[this.data.length-1]<98?this.data[this.data.length-1]++:0;
-					this.remove=()=>this.data[this.data.length-1]?this.data[this.data.length-1]--:0;
-					this.print=()=>this.signature?$scope.signature.data[this.data[0]].name:"custom "+JSON.stringify(this.data);
+					this.add=()=>this.data[this.data.length-1]<99?this.data[this.data.length-1]++:0;
+					this.remove=()=>this.data[this.data.length-1]>1?this.data[this.data.length-1]--:0;
+					this.print=()=>this.signature?$scope.signature.data[this.data[0]].name:"Custom "+this.data[5];
+					this.ingredients=()=>{
+						if (signature) {
+							_ = $scope.signature.data[this.data[0]].ingredients;
+								return this.data[1]?"Salad" + _.substring(_.indexOf(':')) : _;
+						}
+						var out = "";
+						for (var i = 0; i < 3; i++) {
+							if (this.data[i]==-1)
+								continue;
+							out += $scope.custom.data[i][this.data[i]].name + ", ";
+						}
+						var addins = "";
+						for (var i = 0; i < 5; i++) {
+							if (this.data[3][i]==0)
+								continue;
+							addins += $scope.custom.data[3][i].name + " (x" + this.data[3][i] + "), ";
+						}
+
+						for (var i = 0; i < 7; i++) {
+							if (this.data[4][i]==0)
+								continue;
+							addins += this.data[4][i] + "x " + $scope.custom.data[4][i].name + ", ";
+						}
+						if (addins=="")
+							addins += "No addins";
+						else
+							addins = addins.slice(0, addins.length-2);
+						return out + addins;
+					};
 				};
 
 				$scope.signature = {
 					index:-1,
-					num:0,
+					num:1,
+					salad:0,
 					addSandwich:function() {
 						this.num>98?0:this.num++;
 					},
 					removeSandwich:function() {
-						this.num?this.num--:0;
+						this.num>1?this.num--:0;
 					},
 					changeIndex:function(i){
 						this.index = i;
-						this.num = 0;
+						this.num = 1;
 					},
 					data:[
 						{name:"Egg Salad Relish",
@@ -223,68 +313,71 @@
 						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
 						{name:"The Pegasus",
 						ingredients:"Baguette: Roast Beef, Sour Cream, Raw Mushrooms",
-						description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+						description:$sce.trustAsHtml("Turn yourself into a Greek god with our signature sandwich: The Pegasus.  A 6 inch or footlong sub, stuffed with <b>roast beef</b>, <b>sour cream</b> and <b>raw mushrooms</b>."),
 						price:2,
 						vegetarian:false,
 						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
 						{name:"The Gallant",
 						ingredients:"Wholewheat Bread: Turkey, Bacon, Avocado, Cranberry Mayonnaise",
-						description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+						description:$sce.trustAsHtml("Become the bold and brave hero you’ve only dreamt to be with the Gallant. <b>Whole-wheat bread</b> with <b>bacon</b>, <b>turkey</b>, <b>avocado</b> and <b>cranberry mayonnaise.</b>"),
 						price:3,
 						vegetarian:false,
 						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
 						{name:"Angus & Tessie's Skipanon Sing-A-Long",
 						ingredients:"White Bread: Tuna, Mustard, Fresh Herb Relish",
-						description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+						description:$sce.trustAsHtml("Get a taste of Portland and try our Angus & Tessie’s Skipanon Sing-A-Long. It comes with <b>tuna</b> and <b>mustard</b> with <b>fresh herb relish</b> inside our freshly baked <b>white bread.</b>"),
 						price:4,
 						vegetarian:false,
 						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
 						{name:"The Yellow Elephant",
 						ingredients:"Pita: Peanut Butter, Honey, Banana, Toasted Sesame Seeds",
-						description:$sce.trustAsHtml("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"),
+						description:$sce.trustAsHtml("Try the Yellow Elephant apart of our Signature Selection. Pita bread filled with <b>honey</b>, <b>bananas</b> and <b>toasted sesame seeds</b>, which all come together to form something else entirely."),
 						price:5,
 						vegetarian:true,
 						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"}
 					],
 					toSandwich:function() {
-						var x = new Sandwich([this.index, this.num], true);
-						this.num = 0;
+						var x = new Sandwich([this.index, this.salad, this.num], true);
+						this.num = 1;
+						this.salad = 0;
 						return x;
 					}
 				};
 
 				$scope.custom = {
 					index:0,
-					default:[-1,-1,-1,[0,0,0,0,0],[0,0,0,0,0,0],1],
-					sandwich:[-1,-1,-1,[0,0,0,0,0],[0,0,0,0,0,0],1],
+					num:1,
+					default:[-1,-1,-1,[0,0,0,0,0],[0,0,0,0,0,0,0],0,1],
+					sandwich:[-1,-1,-1,[0,0,0,0,0],[0,0,0,0,0,0,0],0,1],
 					data:[[
 						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"White"},
-						{image:"21",name:"Wholewheat"},
-						{image:"21",name:"Baguette"},
-						{image:"21",name:"Pita"}],[
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Wholewheat"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Baguette"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Pita"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png", name:"Salad"}],[
 						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Butter"},
-						{image:"21",name:"Mayonnaise"},
-						{image:"21",name:"Margarine"},
-						{image:"21",name:"Vegannaise"},
-						{image:"21",name:"Peanut Butter"}],[
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Mayonnaise"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Margarine"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Vegannaise"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Peanut Butter"}],[
 						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Turkey"},
-						{image:"21",name:"Roast Beef"},
-						{image:"21",name:"Tuna"},
-						{image:"21",name:"Eggs"},
-						{image:"21",name:"Tempeh"},
-						{image:"21",name:"Griddled Broccoli"}],[
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Roast Beef"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Tuna"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Eggs"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Tempeh"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Griddled Broccoli"}],[
 						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Cucumber"},
-						{image:"21",name:"Lettuce"},
-						{image:"21",name:"Tomato"},
-						{image:"21",name:"Raw Mushrooms"},
-						{image:"21",name:"Alfalfa Sprouts"}],[
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Lettuce"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Tomato"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Raw Mushrooms"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Alfalfa Sprouts"}],[
 						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Cheddar"},
-						{image:"21",name:" Brie"},
-						{image:"21",name:"Herb Cream-Cheese"},
-						{image:"21",name:"Bacon"},
-						{image:"21",name:"Roasted Red Pepper"},
-						{image:"21",name:"Guacamole"},
-						{image:"21",name:"Anchovies"}
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:" Brie"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Herb Cream-Cheese"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Bacon"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Roasted Red Pepper"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Guacamole"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Anchovies"}
 					]],
 					select:function(i) {
 						return $scope.isArray(this.sandwich[this.index])?0:this.sandwich[this.index]=i;
@@ -296,8 +389,9 @@
 						this.sandwich[this.index][i]?this.sandwich[this.index][i]--:0;
 					},
 					toSandwich:function() {
+						this.sandwich[5]=this.num++;
 						var x = this.sandwich.slice();
-						this.sandwich = this.default;
+						this.sandwich = this.default.slice();
 						return new Sandwich(x);
 					}
 				};
@@ -310,16 +404,45 @@
 				$scope.addToBasket = function(sandwich) {
 					if (!sandwich.data[sandwich.data.length-1])
 						return;
+					var same = false;
 					for (var j = $scope.sandwiches.length; j;) {
-						var same = true;
-						if ($scope.sandwiches[--j].data.length == sandwich.data.length)
-							for (var i = sandwich.data.length - 1; i;)
+						if ($scope.sandwiches[--j].data.length == sandwich.data.length) {
+							if (sandwich.signature) {
+								if ($scope.sandwiches[j].signature)
+									if (sandwich.data[0] == $scope.sandwiches[j].data[0] && sandwich.data[1] == $scope.sandwiches[j].data[1])
+										return $scope.sandwiches[j].data[2]+=sandwich.data[2];
+							} else {
+							same = true;
+							for (var i = 3; i;)
 								if ($scope.sandwiches[j].data[--i] != sandwich.data[i])
+									same = false;
+							for (var i = 5; i;)
+								if ($scope.sandwiches[j].data[3][--i] != sandwich.data[3][i])
+									same = false;
+							for (var i = 6; i;)
+								if ($scope.sandwiches[j].data[4][--i] != sandwich.data[4][i])
 									same = false;
 							if(same)
 								return $scope.sandwiches[j].data[sandwich.data.length-1]+=sandwich.data[sandwich.data.length-1];
+							}
+						}
 					}
+
 					$scope.sandwiches.push(sandwich);
+				};
+
+				$scope.numBasketItems = function() {
+					var $=0;
+					for (var i = $scope.sandwiches.length; i;)
+						$+=$scope.sandwiches[--i].data[$scope.sandwiches[i].signature?2:6];
+					return $>99?99:$;
+				};
+
+				$scope.minItemPrice = function() {
+					var m = $scope.sandwiches[$scope.sandwiches.length - 1].price();
+					for (var i = $scope.sandwiches.length - 1; i;)
+						m > $scope.sandwiches[--i].price() ? m = $scope.sandwiches[i].price() : 0;
+					return m;
 				};
 
 				$scope.changePage = function(page) {
@@ -328,12 +451,9 @@
 					$scope.page.custom = page == "custom";
 				};
 
-
-
-
 				$interval(function()
 				{
-					console.log($scope.sandwiches);
+					//console.log($scope.loyalty[$scope.cardString()]);
 				},1000);
 
 
