@@ -302,7 +302,7 @@
 						for (var i = 0; i < 7; i++) {
 							if (this.data[4][i]==0)
 								continue;
-							addins += this.data[4][i] + "x " + $scope.custom.data[4][i].name + ", ";
+							addins += $scope.custom.data[4][i].name + " (x" + this.data[4][i] + "), ";
 						}
 						if (addins=="")
 							addins += "No addins";
