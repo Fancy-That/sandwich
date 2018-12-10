@@ -60,7 +60,7 @@
 					<div class="w3-row">
 						Ingredients:
 						<p class="w3-small w3-card-4">
-							{{signature.data[signature.index].ingredients}}
+							{{signature.salad?"Salad"+signature.data[signature.index].ingredients.substring(signature.data[signature.index].ingredients.indexOf(':')):signature.data[signature.index].ingredients}}
 							<img ng-show="signature.data[signature.index].vegetarian" src="http://images.sasongsmat.nu/vegetarianmark/vegetarian-mark.svg" style="width: 3vh;height: 3vh;"/>
 						</p>
 						Description:
@@ -132,22 +132,22 @@
 								</div>
 							</div>
 						</div>
+						<div class="w3-card-4 w3-right w3-xlarge" style="margin-right: 4px;">
+							Current Cost: {{custom.current().price() | currency:"£"}}
+							<div class="w3-grey w3-medium" style="font-style: italic;">
+								Sandwiches are £1.00
+								<div>
+									+ £0.50 for add-ins
+								</div>
+								<div>
+									+ £0.25 for premium add-ins
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="w3-button" ng-click="addToBasket(custom.toSandwich())">
 					Add To Basket
-				</div>
-				<div class="w3-card-4 w3-right" style="margin-right: 4px;">
-					Current Cost: {{custom.current().price() | currency:"£"}}
-					<div class="w3-tiny w3-grey" style="font-style: italic;">
-						Sandwiches are £1.00
-						<div>
-							+ £0.50 for add-ins
-						</div>
-						<div>
-							+ £0.25 for premium add-ins
-						</div>
-					</div>
 				</div>
 			</div>
 			<div id="basket" class="w3-modal">
@@ -209,7 +209,7 @@
 									The basket is currently empty!
 								</div>
 								<div ng-show="sandwiches.length" class="w3-container">
-									<div class="w3-button w3-left w3-green">
+									<div class="w3-button w3-left w3-green" ng-click="submitOrder()">
 										Submit
 									</div>
 									<div class="w3-right">
@@ -224,6 +224,16 @@
 								</div>
 							</ul>
 						</div>
+					</div>
+				</div>
+			</div>
+			<div id="sent" class="w3-modal">
+				<div class="w3-modal-content w3-round w3-animate-zoom">
+					<span class="w3-button w3-round w3-right" ng-click="closeModal('sent')">
+						&times;
+					</span>
+					<div class="w3-jumbo w3-content">
+						Your order has been sent
 					</div>
 				</div>
 			</div>
@@ -315,6 +325,7 @@
 					changeIndex:function(i){
 						this.index = i;
 						this.num = 1;
+						this.salad = 0;
 					},
 					data:[
 						{name:"Egg Salad Relish",
@@ -464,6 +475,12 @@
 					$scope.page.main = page == "main";
 					$scope.page.signature = page == "signature";
 					$scope.page.custom = page == "custom";
+				};
+
+				$scope.submitOrder = function() {
+					$scope.closeModal('basket');
+					$scope.openModal('sent');
+					$scope.sandwiches = [];
 				};
 
 				$interval(function()
