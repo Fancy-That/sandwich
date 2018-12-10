@@ -137,6 +137,18 @@
 				<div class="w3-button" ng-click="addToBasket(custom.toSandwich())">
 					Add To Basket
 				</div>
+				<div class="w3-card-4 w3-right" style="margin-right: 4px;">
+					Current Cost: {{custom.current().price() | currency:"£"}}
+					<div class="w3-tiny w3-grey" style="font-style: italic;">
+						Sandwiches are £1.00
+						<div>
+							+ £0.50 for add-ins
+						</div>
+						<div>
+							+ £0.25 for premium add-ins
+						</div>
+					</div>
+				</div>
 			</div>
 			<div id="basket" class="w3-modal">
 				<div class="w3-modal-content w3-round w3-animate-zoom">
@@ -387,6 +399,9 @@
 					},
 					removeAddin:function(i) {
 						this.sandwich[this.index][i]?this.sandwich[this.index][i]--:0;
+					},
+					current:function() {
+						return new Sandwich(this.sandwich.slice());
 					},
 					toSandwich:function() {
 						this.sandwich[5]=this.num++;
