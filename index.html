@@ -96,58 +96,53 @@
 					Custom Sandwiches
 				</div>
 				<div>
-					<div class="w3-bar">
-						<div class="w3-bar-item w3-button {{custom.index==0?'w3-black w3-text-white':''}}" ng-click="custom.index=0">
-							Bread
-						</div>
-						<div class="w3-bar-item w3-button {{custom.index==1?'w3-black w3-text-white':''}}" ng-click="custom.index=1">
-							Spread
-						</div>
-						<div class="w3-bar-item w3-button {{custom.index==2?'w3-black w3-text-white':''}}" ng-click="custom.index=2">
-							Main
-						</div>
-						<div class="w3-bar-item w3-button {{custom.index==3?'w3-black w3-text-white':''}}" ng-click="custom.index=3">
-							Add-ins
-						</div>
-						<div class="w3-bar-item w3-button {{custom.index==4?'w3-black w3-text-white':''}}" ng-click="custom.index=4">
-							Premium Add-ins
-						</div>
-					</div>
-					<div class="w3-card-4 w3-half" ng-model="custom.data[custom.index]" style="margin-left:25vw;">
-						<div ng-repeat="x in custom.data[custom.index]">
-							<div class="w3-display-container customImage" style="width:15vh;" ng-click="custom.select($index)">
-								<img class="w3-hover-grayscale w3-image {{custom.sandwich[custom.index]==$index?'w3-grayscale':''}}" src="{{x.image}}" style="width: 15vh; height: 15vh;" />
-								<div class="w3-display-bottommiddle w3-container customImageText" style="display:block;">
-									{{x.name}}
-								</div>
-								<div class="w3-display-middle w3-jumbo w3-green w3-circle fa fa-check" style="{{custom.sandwich[custom.index]==$index?'':'display:none;'}}">
-								</div>
-								<div class="w3-display-middle customAddIn" style="{{isArray(custom.sandwich[custom.index])?'':'display: none;'}}">
-									<div class="w3-button fa fa-plus" ng-click="custom.addAddin($index)">
+					<div class="w3-card-4 w3-cell">
+						<div ng-repeat="x in custom.data" class="w3-cell">
+							<div class="w3-large" style="height:7vh;">
+								<b>
+									{{custom.dataHead[$index]}}
+								</b>
+							</div>
+							<div ng-repeat="y in x">
+								<div class="w3-card-4 w3-margin" style="width:15vw; max-height: 15vw; visibility:{{($parent.$index==0||custom.sandwich[$parent.$index-1]!=-1)&&!isArray(custom.sandwich[$parent.$index])||showAddins()?'inline':'hidden'}}">
+									<div class="w3-display-container customImage" ng-click="custom.select($parent.$index, $index)">
+										<img class="w3-hover-grayscale w3-center w3-image {{custom.sandwich[$parent.$index]==$index?'w3-grayscale':''}}" src="{{y.image}}" style="width: 7vw;"/>
+										<div class="w3-display-middle w3-jumbo w3-green w3-circle fa fa-check" style="{{custom.sandwich[$parent.$index]==$index?'':'display:none;'}}">
+										</div>
+										<div class="w3-display-middle customAddIn" style="{{isArray(custom.sandwich[$parent.$index])?'':'display: none;'}}">
+											<div class="w3-button fa fa-plus" ng-click="custom.addAddin($parent.$index, $index)">
+											</div>
+											<input ng-model="custom.sandwich[$parent.$index][$index]" style="width:5vw; margin:0; {{custom.sandwich[$parent.$index][$index]?'visibility: visible;':''}}" class="w3-center w3-white" disabled>
+											</input>
+											<div class="w3-button fa fa-minus" ng-click="custom.removeAddin($parent.$index, $index)">
+											</div>
+										</div>
 									</div>
-									<input ng-model="custom.sandwich[custom.index][$index]" style="width:5vw; margin:0;" class="w3-center w3-white" disabled>
-									</input>
-									<div class="w3-button fa fa-minus" ng-click="custom.removeAddin($index)">
+									<div class="w3-container customImageText" style="display:block;">
+										{{y.name}}
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="w3-card-4 w3-right w3-xlarge" style="margin-right: 4px;">
-							Current Cost: {{custom.current().price() | currency:"£"}}
-							<div class="w3-grey w3-medium" style="font-style: italic;">
-								Sandwiches are £1.00
-								<div>
-									+ £0.50 for add-ins
-								</div>
-								<div>
-									+ £0.25 for premium add-ins
-								</div>
+					</div>
+					<div class="w3-xlarge w3-cell" style="padding: 5px;">
+						<div class="w3-border">
+							{{custom.current().ingredients()}}
+						</div>
+						Current Cost: {{custom.current().price() | currency:"£"}}
+						<div class="w3-grey w3-medium" style="font-style: italic;">
+							Sandwiches are £1.00
+							<div>
+								+ £0.50 for add-ins
+							</div>
+							<div>
+								+ £0.25 for premium add-ins
 							</div>
 						</div>
+						<div class="w3-button w3-medium" ng-click="addToBasket(custom.toSandwich())">
+							Add To Basket
+						</div>
 					</div>
-				</div>
-				<div class="w3-button" ng-click="addToBasket(custom.toSandwich())">
-					Add To Basket
 				</div>
 			</div>
 			<div id="basket" class="w3-modal">
@@ -173,7 +168,7 @@
 							</input>
 							<div>
 								<span ng-repeat="x in starNum()">
-									<span class="fa fa-star w3-text-{{loyalty[cardString()]>$index?'yellow':loyalty[cardString()]==$index&&sandwiches.length?'green':'grey'}}">
+									<span class="fa fa-star w3-text-{{loyalty[cardString()]>=$index?loyalty[cardString()]==9&&$index==9&&sandwiches.length?'green':'yellow':'grey'}}">
 									</span>
 								</span>
 							</div>
@@ -209,7 +204,7 @@
 									The basket is currently empty!
 								</div>
 								<div ng-show="sandwiches.length" class="w3-container">
-									<div class="w3-button w3-left w3-green" ng-click="submitOrder()">
+									<div class="w3-button w3-left w3-green w3-round" ng-click="submitOrder()">
 										Submit
 									</div>
 									<div class="w3-right">
@@ -234,6 +229,39 @@
 					</span>
 					<div class="w3-jumbo w3-content">
 						Your order has been sent
+					</div>
+				</div>
+			</div>
+			<div id="details" class="w3-modal">
+				<div class="w3-modal-content w3-round w3-animate-zoom">
+					<span class="w3-button w3-round w3-right" ng-click="closeModal('details')">
+						&times;
+					</span>
+					<div class="w3-jumbo w3-content">
+						<div>
+							Personal Details
+						</div>
+						<div class="w3-small" style="font-style: italic;">
+							These are just for identifying you when you collect your sandwich, and will not be stored.
+						</div>
+						<div class="w3-large w3-cell-row">
+							<span class="w3-cell" style="padding-right: 5px;">
+								Name:
+							</span>
+							<div class="w3-cell">
+							<input class="w3-input w3-cell w3-border" placeholder="First Name">
+							</input>
+							</div>
+							<div class="w3-cell">
+							<input class="w3-input w3-cell w3-border" placeholder="Surname">
+							</input>
+							</div>
+						</div>
+						<div class="w3-cell-row">
+						</div>
+						<div class="w3-button w3-green w3-text-white w3-medium w3-round" style="margin: 10px;" ng-click="sendOrder()">
+							Send order
+						</div>
 					</div>
 				</div>
 			</div>
@@ -334,31 +362,31 @@
 						description:$sce.trustAsHtml("Enjoy our Egg Salad Relish which comes with <b>egg mayonnaise</b>, <b>sliced radishes</b>, <b>chopped oil-cured olives</b> and <b>fresh coriander</b> inside our freshly baked <b>white bread</b>."),
 						price:1,
 						vegetarian:true,
-						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+						image:""},
 						{name:"The Pegasus",
 						ingredients:"Baguette: Roast Beef, Sour Cream, Raw Mushrooms",
 						description:$sce.trustAsHtml("Turn yourself into a Greek god with our signature sandwich: The Pegasus.  A 6 inch or footlong sub, stuffed with <b>roast beef</b>, <b>sour cream</b> and <b>raw mushrooms</b>."),
 						price:2,
 						vegetarian:false,
-						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+						image:""},
 						{name:"The Gallant",
 						ingredients:"Wholewheat Bread: Turkey, Bacon, Avocado, Cranberry Mayonnaise",
 						description:$sce.trustAsHtml("Become the bold and brave hero you’ve only dreamt to be with the Gallant. <b>Whole-wheat bread</b> with <b>bacon</b>, <b>turkey</b>, <b>avocado</b> and <b>cranberry mayonnaise.</b>"),
 						price:3,
 						vegetarian:false,
-						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+						image:""},
 						{name:"Angus & Tessie's Skipanon Sing-A-Long",
 						ingredients:"White Bread: Tuna, Mustard, Fresh Herb Relish",
 						description:$sce.trustAsHtml("Get a taste of Portland and try our Angus & Tessie’s Skipanon Sing-A-Long. It comes with <b>tuna</b> and <b>mustard</b> with <b>fresh herb relish</b> inside our freshly baked <b>white bread.</b>"),
 						price:4,
 						vegetarian:false,
-						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"},
+						image:""},
 						{name:"The Yellow Elephant",
 						ingredients:"Pita: Peanut Butter, Honey, Banana, Toasted Sesame Seeds",
 						description:$sce.trustAsHtml("Try the Yellow Elephant apart of our Signature Selection. Pita bread filled with <b>honey</b>, <b>bananas</b> and <b>toasted sesame seeds</b>, which all come together to form something else entirely."),
 						price:5,
 						vegetarian:true,
-						image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png"}
+						image:""}
 					],
 					toSandwich:function() {
 						var x = new Sandwich([this.index, this.salad, this.num], true);
@@ -373,44 +401,45 @@
 					num:1,
 					default:[-1,-1,-1,[0,0,0,0,0],[0,0,0,0,0,0,0],0,1],
 					sandwich:[-1,-1,-1,[0,0,0,0,0],[0,0,0,0,0,0,0],0,1],
+					dataHead: ["Bread", "Spread", "Main", "Add-ins", "Premium Add-ins"],
 					data:[[
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"White"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Wholewheat"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Baguette"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Pita"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png", name:"Salad"}],[
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Butter"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Mayonnaise"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Margarine"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Vegannaise"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Peanut Butter"}],[
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Turkey"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Roast Beef"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Tuna"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Eggs"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Tempeh"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Griddled Broccoli"}],[
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Cucumber"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Lettuce"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Tomato"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Raw Mushrooms"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Alfalfa Sprouts"}],[
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Cheddar"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:" Brie"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Herb Cream-Cheese"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Bacon"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Roasted Red Pepper"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Guacamole"},
-						{image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/2000px-Red_X.svg.png",name:"Anchovies"}
+						{image:"https://realfood.tesco.com/media/images/RFO-Hero-636x418-Bread-ae559458-137f-4030-9269-cbf545a79878-0-636x418.jpg",name:"White"},
+						{image:"http://www.thelittleloaf.com/wp-content/uploads/2012/10/malted-wholemeal-loaf-023.jpg",name:"Wholewheat"},
+						{image:"https://static1.squarespace.com/static/5216e267e4b0cb074c79fdb3/t/58d1f2a93e00bec90eaf812a/1490154187595/?format=750w",name:"Baguette"},
+						{image:"https://sweetsimplevegan.com/wp-content/uploads/2018/05/Homemade_Pita_Bread_Sweet_Simple_Vegan-copy.jpg",name:"Pita"},
+						{image:"https://cdn-image.myrecipes.com/sites/default/files/styles/4_3_horizontal_-_1200x900/public/tkphoto_0405180056.jpg?itok=TkK0Wsuh", name:"Salad"}],[
+						{image:"https://www.irishtimes.com/polopoly_fs/1.3169759.1501270799!/image/image.jpg_gen/derivatives/box_620_330/image.jpg",name:"Butter"},
+						{image:"http://healthyliving.natureloc.com/wp-content/uploads/2016/08/Mayonnaise-Simple-Mayonnaise-Preparation.jpg",name:"Mayonnaise"},
+						{image:"http://2.bp.blogspot.com/-8kh1-CsMU-w/TbXj2MCKIII/AAAAAAAAABs/6RS9lhHwj-E/s1600/margarine.jpg",name:"Margarine"},
+						{image:"https://cdn0.woolworths.media/content/wowproductimages/medium/606728.jpg",name:"Vegannaise"},
+						{image:"https://upload.wikimedia.org/wikipedia/commons/b/bc/PeanutButter.jpg",name:"Peanut Butter"}],[
+						{image:"https://hoosierhomemade.com/wp-content/uploads/Roasted-Turkey-Breast.sliced.jpg",name:"Turkey"},
+						{image:"https://cdn.shopify.com/s/files/1/2063/0927/products/Sliced_Roast_Beef_900x.png?v=1499366800",name:"Roast Beef"},
+						{image:"https://midlandchilled.co.uk/wp-content/uploads/2013/12/F312PN.jpg",name:"Tuna"},
+						{image:"https://www.maggi.ph/uploads/recipes/featured/Fried_Eggs_big-580x387.jpg",name:"Eggs"},
+						{image:"https://www.babemadeblog.com/wp-content/uploads/2018/02/Tempeh-5-1.jpg",name:"Tempeh"},
+						{image:"http://thebiswolds.com/wp-content/uploads/2014/06/Grilled-broccoli-for-dinner.jpg",name:"Griddled Broccoli"}],[
+						{image:"https://giantonline.com.sg/assets/easyimage/6/6bbca1ae0e0dbe99095cbee723e83547.jpg",name:"Cucumber"},
+						{image:"https://cdn20.patchcdn.com/users/714975/20180420/083555/styles/T800x600/public/processed_images/romaine-1524260270-1853-1524270800-2215.jpg",name:"Lettuce"},
+						{image:"https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX3183695.jpg",name:"Tomato"},
+						{image:"http://www.anh-usa.org/wp-content/uploads/2014/08/Raw-Mushrooms-Pulse.jpg",name:"Raw Mushrooms"},
+						{image:"http://www.gstatic.com/tv/thumb/persons/155973/155973_v9_bb.jpg",name:"Alfalfa Sprouts"}],[
+						{image:"https://i.guim.co.uk/img/media/1fb039ad1bae951846d2a2e605fa9e6569aa25c6/124_765_4703_2821/master/4703.jpg?width=700&quality=85&auto=format&fit=max&s=d7d60886dca5735427f4e304246e95f2",name:"Cheddar"},
+						{image:"https://cdn.shopify.com/s/files/1/0181/6997/products/Probiotic_Brie_large.jpg?v=1529967801",name:" Brie"},
+						{image:"https://lowcarb-vegan.net/wp-content/uploads/2016/01/IMG_4556_1-770x579.jpg",name:"Herb Cream-Cheese"},
+						{image:"https://www.telegraph.co.uk/content/dam/news/2017/03/27/peppa-pig_trans_NvBQzQNjv4Bqj-tr9vTXV4z2eew8dUnlFXndML-fnbpvlkWcWvKdhwU.png?imwidth=450",name:"Bacon"},
+						{image:"http://scibosnian.com/wp-content/uploads/2017/07/Roasted_Red_Peppers.jpg",name:"Roasted Red Pepper"},
+						{image:"https://cdn-image.foodandwine.com/sites/default/files/styles/medium_2x/public/201310-xl-creamy-guacamole-recipe.jpg?itok=FtbNbJH5",name:"Guacamole"},
+						{image:"https://www.seriouseats.com/images/2015/07/20150706-anchovies-primary.jpg",name:"Anchovies"}
 					]],
-					select:function(i) {
-						return $scope.isArray(this.sandwich[this.index])?0:this.sandwich[this.index]=i;
+					select:function(i, x) {
+						return $scope.isArray(this.sandwich[i])?0:this.sandwich[i]=x;
 					},
-					addAddin:function(i) {
-						this.sandwich[this.index][i]>98?0:this.sandwich[this.index][i]++;
+					addAddin:function(x, i) {
+						this.sandwich[x][i]>98?0:this.sandwich[x][i]++;
 					},
-					removeAddin:function(i) {
-						this.sandwich[this.index][i]?this.sandwich[this.index][i]--:0;
+					removeAddin:function(x, i) {
+						this.sandwich[x][i]?this.sandwich[x][i]--:0;
 					},
 					current:function() {
 						return new Sandwich(this.sandwich.slice());
@@ -480,19 +509,35 @@
 
 				$scope.submitOrder = function() {
 					$scope.closeModal('basket');
+					$scope.openModal('details');
+					$scope.sandwiches = [];
+				};
+
+				$scope.sendOrder = function() {
+					$scope.closeModal('details');
 					$scope.openModal('sent');
 					$scope.sandwiches = [];
 				};
 
+				$scope.help = [0, 0];
+
+				$scope.sethelp = function (i, j) {
+					$scope.help = [i, j];
+				};
+
 				$interval(function()
 				{
-					//console.log($scope.loyalty[$scope.cardString()]);
+					console.log($scope.help);
 				},1000);
 
 
 				$scope.isArray = function(x) {
 					return Array.isArray(x);
 				};
+
+				$scope.showAddins = function() {
+					return ($scope.custom.sandwich[0]+1)&&($scope.custom.sandwich[1]+1)&&($scope.custom.sandwich[2]+1);
+				}
 			});
 
 
