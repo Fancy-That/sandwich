@@ -230,6 +230,9 @@
 					<div class="w3-jumbo w3-content">
 						Your order has been sent
 					</div>
+					<div class="w3-xlarge w3-content">
+						Your order number is: {{submit.orderNum()}}
+					</div>
 				</div>
 			</div>
 			<div id="details" class="w3-modal">
@@ -249,11 +252,11 @@
 								Name:
 							</span>
 							<div class="w3-cell">
-							<input class="w3-input w3-cell w3-border" placeholder="First Name">
+							<input class="w3-input w3-cell w3-border" ng-model="submit.fName" placeholder="First Name">
 							</input>
 							</div>
 							<div class="w3-cell">
-							<input class="w3-input w3-cell w3-border" placeholder="Surname">
+							<input class="w3-input w3-cell w3-border" ng-model="submit.sName" placeholder="Surname">
 							</input>
 							</div>
 						</div>
@@ -362,31 +365,31 @@
 						description:$sce.trustAsHtml("Enjoy our Egg Salad Relish which comes with <b>egg mayonnaise</b>, <b>sliced radishes</b>, <b>chopped oil-cured olives</b> and <b>fresh coriander</b> inside our freshly baked <b>white bread</b>."),
 						price:1,
 						vegetarian:true,
-						image:""},
+						image:"https://www.chowstatic.com/assets/2014/09/30681_egg_salad_3000x2000.jpg"},
 						{name:"The Pegasus",
 						ingredients:"Baguette: Roast Beef, Sour Cream, Raw Mushrooms",
-						description:$sce.trustAsHtml("Turn yourself into a Greek god with our signature sandwich: The Pegasus.  A 6 inch or footlong sub, stuffed with <b>roast beef</b>, <b>sour cream</b> and <b>raw mushrooms</b>."),
+						description:$sce.trustAsHtml("Turn yourself into a Greek god and fly away with our signature sandwich: The Pegasus. A 6 inch or footlong sub, stuffed with <b>roast beef</b>, <b>sour cream</b> and <b>raw mushrooms</b>."),
 						price:2,
 						vegetarian:false,
-						image:""},
+						image:"https://media-cdn.tripadvisor.com/media/photo-s/06/5a/e1/38/3-of-my-huge-club-sandwich.jpg"},
 						{name:"The Gallant",
 						ingredients:"Wholewheat Bread: Turkey, Bacon, Avocado, Cranberry Mayonnaise",
 						description:$sce.trustAsHtml("Become the bold and brave hero you’ve only dreamt to be with the Gallant. <b>Whole-wheat bread</b> with <b>bacon</b>, <b>turkey</b>, <b>avocado</b> and <b>cranberry mayonnaise.</b>"),
 						price:3,
 						vegetarian:false,
-						image:""},
+						image:"https://static1.squarespace.com/static/590e252a03596e93eb5d3cb9/592e2c7ce3df28b3b4aed036/5a0a4ff053450af07c0a5a23/1510625271445/Sandwich.jpg?format=1500w"},
 						{name:"Angus & Tessie's Skipanon Sing-A-Long",
 						ingredients:"White Bread: Tuna, Mustard, Fresh Herb Relish",
 						description:$sce.trustAsHtml("Get a taste of Portland and try our Angus & Tessie’s Skipanon Sing-A-Long. It comes with <b>tuna</b> and <b>mustard</b> with <b>fresh herb relish</b> inside our freshly baked <b>white bread.</b>"),
 						price:4,
 						vegetarian:false,
-						image:""},
+						image:"https://images-gmi-pmc.edge-generalmills.com/db53baa5-9b18-4fe4-ba50-a5197f53de18.jpg"},
 						{name:"The Yellow Elephant",
 						ingredients:"Pita: Peanut Butter, Honey, Banana, Toasted Sesame Seeds",
 						description:$sce.trustAsHtml("Try the Yellow Elephant apart of our Signature Selection. Pita bread filled with <b>honey</b>, <b>bananas</b> and <b>toasted sesame seeds</b>, which all come together to form something else entirely."),
 						price:5,
 						vegetarian:true,
-						image:""}
+						image:"https://plylerdoesfood.files.wordpress.com/2011/07/pb.jpg"}
 					],
 					toSandwich:function() {
 						var x = new Sandwich([this.index, this.salad, this.num], true);
@@ -423,7 +426,7 @@
 						{image:"https://cdn20.patchcdn.com/users/714975/20180420/083555/styles/T800x600/public/processed_images/romaine-1524260270-1853-1524270800-2215.jpg",name:"Lettuce"},
 						{image:"https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX3183695.jpg",name:"Tomato"},
 						{image:"http://www.anh-usa.org/wp-content/uploads/2014/08/Raw-Mushrooms-Pulse.jpg",name:"Raw Mushrooms"},
-						{image:"http://www.gstatic.com/tv/thumb/persons/155973/155973_v9_bb.jpg",name:"Alfalfa Sprouts"}],[
+						{image:"https://image.shutterstock.com/image-photo/alfalfa-sprouts-kai-wahrei-on-260nw-579459937.jpg",name:"Alfalfa Sprouts"}],[
 						{image:"https://i.guim.co.uk/img/media/1fb039ad1bae951846d2a2e605fa9e6569aa25c6/124_765_4703_2821/master/4703.jpg?width=700&quality=85&auto=format&fit=max&s=d7d60886dca5735427f4e304246e95f2",name:"Cheddar"},
 						{image:"https://cdn.shopify.com/s/files/1/0181/6997/products/Probiotic_Brie_large.jpg?v=1529967801",name:" Brie"},
 						{image:"https://lowcarb-vegan.net/wp-content/uploads/2016/01/IMG_4556_1-770x579.jpg",name:"Herb Cream-Cheese"},
@@ -514,9 +517,13 @@
 				};
 
 				$scope.sendOrder = function() {
+					if ($scope.submit.fName.trim() == "" || $scope.submit.sName.trim() == "") {
+						window.alert("First name and surname required!");
+						return;
+					}
 					$scope.closeModal('details');
 					$scope.openModal('sent');
-					$scope.sandwiches = [];
+					$scope.submit.random = Math.random() * 1000 | 0;
 				};
 
 				$scope.help = [0, 0];
@@ -527,7 +534,7 @@
 
 				$interval(function()
 				{
-					console.log($scope.help);
+					console.log($scope.submit);
 				},1000);
 
 
@@ -537,9 +544,12 @@
 
 				$scope.showAddins = function() {
 					return ($scope.custom.sandwich[0]+1)&&($scope.custom.sandwich[1]+1)&&($scope.custom.sandwich[2]+1);
-				}
-			});
+				};
 
+				$scope.submit = {fName:"", sName:"", random:0, orderNum:function(){
+					return this.fName.toUpperCase().substring(0,3) + this.sName.toUpperCase().substring(0,3) + this.random;
+				}};
+			});
 
 			var basket = document.getElementById('basket');
 			window.onclick = function(event) {
