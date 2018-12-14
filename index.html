@@ -104,7 +104,7 @@
 								</b>
 							</div>
 							<div ng-repeat="y in x">
-								<div class="w3-card-4 w3-margin" style="width:15vw; max-height: 15vw; visibility:{{($parent.$index==0||custom.sandwich[$parent.$index-1]!=-1)&&!isArray(custom.sandwich[$parent.$index])||showAddins()?'inline':'hidden'}}">
+								<div class="w3-card-4 w3-margin" style="{{custom.sandwich[2]==2&&$parent.$index==4&&$!index?'display: none;':''}} width:15vw; max-height: 15vw; visibility:{{($parent.$index==0||custom.sandwich[$parent.$index-1]!=-1)&&!isArray(custom.sandwich[$parent.$index])||showAddins()?'inline':'hidden'}}">
 									<div class="w3-display-container customImage" ng-click="custom.select($parent.$index, $index)">
 										<img class="w3-hover-grayscale w3-center w3-image {{custom.sandwich[$parent.$index]==$index?'w3-grayscale':''}}" src="{{y.image}}" style="width: 7vw;"/>
 										<div class="w3-display-middle w3-jumbo w3-green w3-circle fa fa-check" style="{{custom.sandwich[$parent.$index]==$index?'':'display:none;'}}">
